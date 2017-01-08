@@ -4,16 +4,15 @@ from language import *
 from mute import *
 from greetings import *
 from lights import *
-from stop import *
+from volume import *
 from admin import *
 from settings import *
 from speak import *
 
 commands = {
-    stop: stopWords,
+    volume: volumeWords,
     greeting: greetingWords,
     lights: lightWords,
-    mute: muteWords,
     }
 
 def isMessageForComputer(words, numWords):
@@ -52,7 +51,7 @@ def handle(message):
     numProcessedWords = len(processedWords)
 
     execute = lambda: commandNotRecognized(words)
-    maxScore = 0
+    maxScore = settings_minThreshold
 
     if (numWords > 1 and isMessageForComputer(processedWords, numProcessedWords)):
         for key, value in commands.items():
@@ -64,15 +63,6 @@ def handle(message):
                 execute = lambda: command(args)
                 maxScore = score
 
-    vocalResponse = execute()
-    speak(vocalResponse)
-
-while(1):
-    n = raw_input("Please provide input:")
-    handle(n)
-
-
-        
-
-
-
+        vocalResponse = execute()
+        if settings_levelOneAudibleConfirmations:
+            speak(vocalResponse)
